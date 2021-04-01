@@ -49,10 +49,18 @@ void show_map(int life_map[][mr_length])
         }
         cout<<endl;
     }
-    cout<<"-------------------------------"<<endl;
 }
 
-void DeadorAlive(int* point)
+void copy_map(int a_map[][mr_length], int b_map[][mr_length])
+{
+    // a copy to b
+    for(int y = mr_length-2; y >= 1; y--)
+        for(int x = 1; x <= mr_length-2; x++)
+            b_map[y][x] = a_map[y][x];
+    // no need to return
+}
+
+void DeadorAlive(int* point, int* temp)
 {
     //设置八个接触位
     int *left, *left_top, *top, *right_top, *right, *right_under, *under, *left_under;
@@ -105,12 +113,12 @@ void DeadorAlive(int* point)
     if(*point == 1) // if *point == 1
     {
         if(touch_alive_count < 2 || touch_alive_count > 3)
-            *point = 0;
+            *temp = 0;
     }
     else
     {
         if(touch_alive_count == 2 || touch_alive_count == 3)
-            *point = 1;
+            *temp = 1;
     }
     //no need to retuen
 }
@@ -118,7 +126,13 @@ void DeadorAlive(int* point)
 int main()
 {
 
+    /*
+    temp_map --复制--> life_map
+    对life_map中的point判断生死--记录-->temp_map
+    循环以上
+    */
     int life_map[mr_length][mr_length];
+    int temp_map[mr_length][mr_length];
     int x, y;
 
     // 设置种子
@@ -131,25 +145,27 @@ int main()
         for(x = 0; x <= mr_length-1; x++)
         {
             if((y <= empty_len - 1) || (y >= empty_len + life_init_len))
-                life_map[y][x] = 0;
+                temp_map[y][x] = 0;
             else if ((x <= empty_len - 1) || (x >= empty_len + life_init_len))
-                life_map[y][x] = 0;
+                temp_map[y][x] = 0;
             else
-                life_map[y][x] = rand()%2;
+                temp_map[y][x] = rand()%2;
         }
     }
 
     //star the game
     //遍历map
 
-    show_map(life_map);
     do
     {
+        // temp_map --复制--> life_map
+        copy_map(temp_map, life_map);
         for(y = mr_length - 2; y >= 1; y--)
         {
             for(x = 1; x <= mr_length - 2; x++)
             {
-                DeadorAlive(&life_map[y][x]);
+                //检查用life_map，修改用temp_map
+                DeadorAlive(&life_map[y][x], &temp_map[y][x]);
             }
         }
         sleep(2);
