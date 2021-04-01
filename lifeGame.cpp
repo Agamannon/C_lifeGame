@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctime>
 #include <cstdlib>
+#include <unistd.h>
 
 /*
 游戏规则：
@@ -24,7 +25,7 @@ V0.2
 “人口过少”：任何活细胞如果活邻居少于2个，则死掉。
 “正常”：任何活细胞如果活邻居为2个或3个，则继续活。
 “人口过多”：任何活细胞如果活邻居大于3个，则死掉。
-“繁殖”：任何死细胞如果活邻居为3个，则活过来。
+“繁殖”：任何死细胞如果活邻居为2、3个，则活过来。
 
 */
 
@@ -108,7 +109,7 @@ void DeadorAlive(int* point)
     }
     else
     {
-        if(touch_alive_count == 3)
+        if(touch_alive_count == 2 || touch_alive_count == 3)
             *point = 1;
     }
     //no need to retuen
@@ -141,7 +142,6 @@ int main()
     //star the game
     //遍历map
 
-    char temp[20];
     show_map(life_map);
     do
     {
@@ -152,9 +152,10 @@ int main()
                 DeadorAlive(&life_map[y][x]);
             }
         }
-        cin>>temp;
+        sleep(2);
+        system("cls");
         show_map(life_map);
-    } while (temp != "8");
+    } while (1);
 
     system("pause");
     return 0;
